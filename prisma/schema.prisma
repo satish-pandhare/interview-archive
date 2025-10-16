@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id
+  name          String
+  email         String     @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  answers       Answer[]
+  questions     Question[]
+  accounts      Account[]
+  sessions      Session[]
+  members       Member[]
+  groups        Group[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  roleId      String?
+  createdById String
+  companyId   String?
+  aiAnswer    String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  content     String   @db.Text
+  link        String?  @db.Text
+  title       String
+  answers     Answer[]
+  Company     Company? @relation(fields: [companyId], references: [id])
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  role        Role?    @relation(fields: [roleId], references: [id])
+  tags        Tag[]    @relation("QuestionTags")
+
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@index([createdById])
+  @@index([companyId])
+  @@index([roleId])
+}
+
+model Answer {
+  id           String   @id @default(cuid())
+  content      String   @db.Text
+  contentLink  String?  @db.Text
+  aiEvaluation Json?
+  questionId   String
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  question     Question @relation(fields: [questionId], references: [id])
+
+  @@index([questionId])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  questions Question[] @relation("QuestionTags")
+}
+
+model Company {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  logoUrl   String?    @db.Text
+  questions Question[]
+}
+
+model Role {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  questions Question[]
+}
+
+model Group {
+  id         String  @id @default(cuid())
+  name       String  @unique
+  imageUrl   String? @db.Text
+  isPrivate  Boolean @default(true)
+  inviteCode String? @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  members   Member[]
+  questions Question[]
+
+  @@index([userId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member {
+  id      String     @id @default(cuid())
+  userId  String
+  groupId String
+  role    MemberRole @default(GUEST)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, groupId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+model Message {
+  id String @id @default(cuid())
+}
