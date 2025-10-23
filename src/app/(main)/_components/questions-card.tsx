@@ -63,7 +63,7 @@ export const QuestionsCard = ({ question }: { question: QuestionsType }) => {
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-2 w-full">
             <UserAvatar src={question.createdBy.image!} />
-            <span className="text-sm font-medium truncate">
+            <span className="text-sm font-medium truncate max-w-24">
               {question.createdBy.name}
             </span>
           </div>

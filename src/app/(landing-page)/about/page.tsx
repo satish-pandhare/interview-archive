@@ -168,7 +168,7 @@ export default function AboutPage() {
               </div>
               <div className="pt-4">
                 <a
-                  href="https://github.com/harsh-m-patil/interview-archive"
+                  href="https://github.com/satish-pandhare/interview-archive"
                   target="_blank"
                   rel="noreferrer"
                 >

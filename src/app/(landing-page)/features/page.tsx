@@ -167,7 +167,7 @@ export default function FeaturesPage() {
         </motion.div>
 
         <footer className="mt-16 text-center text-sm text-muted-foreground py-8">
-          <p>Made with ❤️ by Harsh</p>
+          <p>Made with ❤️ by Satish</p>
         </footer>
       </section>
     </div>

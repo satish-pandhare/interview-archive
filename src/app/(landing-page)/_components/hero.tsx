@@ -76,7 +76,7 @@ export function Hero() {
             </Link>
 
             <Link
-              href="https://github.com/harsh-m-patil/interview-archive"
+              href="https://github.com/satish-pandhare/interview-archive"
               target="_blank"
               rel="noopener noreferrer"
             >
