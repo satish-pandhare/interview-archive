@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   }: { question: string; answer: string; answerId: string } = await req.json();
 
   const result = streamObject({
-    model: google("gemini-2.0-flash"),
+    model: google("gemini-2.5-flash"),
     providerOptions: {
       google: {
         structuredOutputs: true,
